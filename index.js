@@ -34,12 +34,11 @@ const questions =
 function chooseAction() {
     inquirer
     .prompt(questions)
-    .then(async (response) => {
+    .then((response) => {
         if (response.action === "Quit"){
             return;
         } else {
-        await handleBiz(response);
-        chooseAction();
+        handleBiz(response);
         }
     })
 }
@@ -48,9 +47,7 @@ function chooseAction() {
 const handleBiz = (response) => {
     switch(response.action) {
         case "View All Employees":
-            console.log('View all employees chosen');
-            // chooseAction();
-            break;
+            return viewEmployees()
         case "Add Employee":
             console.log("Add Employee chosen");
             // chooseAction();
@@ -60,17 +57,13 @@ const handleBiz = (response) => {
             // chooseAction();
             break;
         case "View All Roles":
-            console.log('view all roles');
-            // chooseAction();
-            break;
+            return viewRoles();
         case "Add Role":
             console.log("add role");
             // chooseAction();
             break;
         case "View All Departments":
-            console.log("view alll depts");
             return viewDepartments();
-            // chooseAction();
         case "Add Department":
             console.log("add dept")
             // chooseAction();
@@ -85,12 +78,24 @@ const handleBiz = (response) => {
 
 const viewDepartments = function(){
     db.query('SELECT * FROM department', function (err, results) {
-        console.table(results)
-        //console.table("All Departments", newTable)
-        
+        console.table("Departments", results)
+        chooseAction()
     })
 }
 
+const viewEmployees = function(){
+    db.query('SELECT * FROM employee', function (err, results) {
+        console.table("Employees", results)
+        chooseAction()
+    })
+}
+
+const viewRoles = function(){
+    db.query("SELECT * FROM role", function (err, results) {
+        console.table("Roles", results)
+        chooseAction();
+    })
+}
 
 
 // Function call to initialize app
