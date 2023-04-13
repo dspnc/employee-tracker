@@ -3,12 +3,14 @@ CREATE DATABASE cms_db;
 
 USE cms_db;
 
+DROP TABLE IF EXISTS department;
 CREATE TABLE department (
   dept_id INT NOT NULL AUTO_INCREMENT,
   dept_name VARCHAR(30),
   PRIMARY KEY (dept_id)
 );
 
+DROP TABLE IF EXISTS role;
 CREATE TABLE role (
   role_id INT AUTO_INCREMENT PRIMARY KEY,
   role_title VARCHAR(30),
@@ -19,6 +21,7 @@ CREATE TABLE role (
   ON DELETE SET NULL
 );
 
+DROP TABLE IF EXISTS employee;
 CREATE TABLE employee (
   employee_id INT AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30),
