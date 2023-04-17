@@ -44,7 +44,7 @@ function chooseAction() {
 }
 
 //switch case depending on chosen action from prompt
-const handleBiz = (response) => {
+const handleBiz = async (response) => {
     switch(response.action) {
         case "View All Employees":
             return viewEmployees()
@@ -98,12 +98,14 @@ const viewRoles = function(){
 
 const addEmployee = async function(){
 
-    var firstName = await promptFirstName();
-    var lastName = await promptLastName();
-    return writeFullName(firstName, lastName);
+    return promptName();
+ 
 }
 
-const promptFirstName = function(){
+const promptName = function(){
+    var firstName;
+    var lastName;
+    var wholeName;
 
     inquirer.prompt({
         type: 'input',
@@ -111,28 +113,21 @@ const promptFirstName = function(){
         message: 'What is the first name of the new employee?'
         }).then(
         (resp) => {
-            var firstName = resp.firstname;
+            firstName = resp.firstname;
             console.log("First name is " + firstName)
-            return firstName;
-        })
+        }).then(
+            inquirer.prompt({
+            type: "input",
+            name: "lastname",
+            message: "What is the last name of the new employee?"})
+            .then((resp2) => {
+                lastName = resp2.lastname;
+                console.log("Last name is " + lastName)
+                wholeName = firstName + " " + lastName
+                console.log("Full name is " + wholeName)
+            }))
+    }
 
-}
-
-const promptLastName = function(){
-    inquirer.prompt({
-        type: "input",
-        name: "lastname",
-        message: "What is the last name of the new employee?"})
-        .then((resp2) => {
-            var lastName = resp2.lastname;
-            console.log("Last name is " + lastName)
-            return lastName;
-        })
-}
-
-const writeFullName = function(first, last){
-    console.log("first name is " + first + ". Last name is " + last + ", so full name is " + first+ " "+ last)
-}
  
     
 
