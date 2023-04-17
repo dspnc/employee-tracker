@@ -49,9 +49,7 @@ const handleBiz = (response) => {
         case "View All Employees":
             return viewEmployees()
         case "Add Employee":
-            console.log("Add Employee chosen");
-            // chooseAction();
-            break;
+            return addEmployee()
         case "Update Employee Role":
             console.log("updated employee role chosen");
             // chooseAction();
@@ -96,6 +94,47 @@ const viewRoles = function(){
         chooseAction();
     })
 }
+
+
+const addEmployee = async function(){
+
+    var firstName = await promptFirstName();
+    var lastName = await promptLastName();
+    return writeFullName(firstName, lastName);
+}
+
+const promptFirstName = function(){
+
+    inquirer.prompt({
+        type: 'input',
+        name:'firstname',
+        message: 'What is the first name of the new employee?'
+        }).then(
+        (resp) => {
+            var firstName = resp.firstname;
+            console.log("First name is " + firstName)
+            return firstName;
+        })
+
+}
+
+const promptLastName = function(){
+    inquirer.prompt({
+        type: "input",
+        name: "lastname",
+        message: "What is the last name of the new employee?"})
+        .then((resp2) => {
+            var lastName = resp2.lastname;
+            console.log("Last name is " + lastName)
+            return lastName;
+        })
+}
+
+const writeFullName = function(first, last){
+    console.log("first name is " + first + ". Last name is " + last + ", so full name is " + first+ " "+ last)
+}
+ 
+    
 
 
 // Function call to initialize app
