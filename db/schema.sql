@@ -23,12 +23,15 @@ CREATE TABLE role (
 
 DROP TABLE IF EXISTS employee;
 CREATE TABLE employee (
-  employee_id INT AUTO_INCREMENT PRIMARY KEY,
+  employee_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30),
   last_name VARCHAR(30),
   role_id INT,
   manager_id INT,
   FOREIGN KEY (role_id)
   REFERENCES role(role_id)
+  ON DELETE SET NULL,
+  FOREIGN KEY (manager_id)
+  REFERENCES employee(employee_id)
   ON DELETE SET NULL
 );

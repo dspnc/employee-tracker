@@ -39,6 +39,7 @@ function chooseAction() {
             return;
         } else {
         handleBiz(response);
+   
         }
     })
 }
@@ -98,35 +99,54 @@ const viewRoles = function(){
 
 const addEmployee = async function(){
 
-    return promptName();
+    await promptName();
  
 }
 
 const promptName = function(){
     var firstName;
     var lastName;
-    var wholeName;
+    var role;
+    var managerId;
 
-    inquirer.prompt({
-        type: 'input',
-        name:'firstname',
-        message: 'What is the first name of the new employee?'
-        }).then(
+    inquirer.prompt([{
+            type: 'input',
+            name:'firstname',
+            message: 'What is the first name of the new employee?'},
+        {
+            type: 'input',
+            name: 'lastname',
+            message: 'What is the last name of the new employee?'
+        },
+        {
+            type: 'input',
+            name: 'role',
+            message: 'What will be the role of the new employee?'
+        },
+        {
+            type: 'input',
+            name: 'manager',
+            message: "What is the manager id for the new employee's manager?"
+        }
+        ]).then(
         (resp) => {
             firstName = resp.firstname;
             console.log("First name is " + firstName)
-        }).then(
-            inquirer.prompt({
-            type: "input",
-            name: "lastname",
-            message: "What is the last name of the new employee?"})
-            .then((resp2) => {
-                lastName = resp2.lastname;
-                console.log("Last name is " + lastName)
-                wholeName = firstName + " " + lastName
-                console.log("Full name is " + wholeName)
-            }))
-    }
+            lastName = resp.lastname;
+            console.log("Last name is " + lastName)
+            role = resp.role
+            managerId = resp.manager
+            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES("${firstName}", "${lastName}", ${role}, ${managerId})`, function (err, results) {
+                if (err){
+                    console.log("Error inserting data into table: " + err)
+                } else {
+                console.log(`${firstName} ${lastName} has been added to the database`)
+                chooseAction()
+                }
+            })
+        })
+        }
+    
 
  
     
