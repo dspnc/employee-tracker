@@ -142,13 +142,13 @@ const promptName = function(){
     
     //function for updating a chosen employee's role
     const updateRole = function(){
-
-        const roles = db.query(`SELECT * FROM role`, (err, res) => {
+        var roles ={};
+        db.query(`SELECT * FROM role`, (err, res) => {
                 if (err) {
                     console.log(err)
                     return
                 }
-                res.map((role) => ({
+                roles = res.map((role) => ({
                     name: `${role.role_title}`,
                     value: role,
                 }))
@@ -184,9 +184,10 @@ const promptName = function(){
                 inquirer
                   .prompt([
                     {
-                      type: 'input',
+                      type: 'list',
                       name: 'roleId',
                       message: `What is the role id for the new employee?`,
+                      choices: roles
                     },
                   ])
                   .then((resp) => {
@@ -194,7 +195,7 @@ const promptName = function(){
                     
                     // Update the employee data in the database
                     db.query(
-                      `UPDATE employee SET role_id = ${chosenRole} WHERE employee_id = ${employee.employee_id}`,
+                      `UPDATE employee SET role_id = ${chosenRole.role_id} WHERE employee_id = ${employee.employee_id}`,
                       (err, results) => {
                         if (err) {
                           console.log('Error updating employee in database:', err);
