@@ -155,6 +155,7 @@ const promptName = function(){
         })
 
         db.query('SELECT * FROM employee', (err, results) => {
+
             if (err) {
               console.log(err);
               return;
@@ -185,7 +186,7 @@ const promptName = function(){
                     {
                       type: 'input',
                       name: 'roleId',
-                      message: `What is the employee's new role?`,
+                      message: `What is the role id for the new employee?`,
                     },
                   ])
                   .then((resp) => {
@@ -210,6 +211,22 @@ const promptName = function(){
     }
 
     const addDepartment = function(){
+        inquirer.prompt([{
+            type: 'input',
+            name:'deptName',
+            message: 'What is the name of the new department?'}
+        ]).then(
+        (resp) => {
+            db.query(`INSERT INTO department (dept_name) VALUES ("${resp.deptName}")`, (err, results) => {
+                if (err){
+                    console.log(err)
+                    return
+                }
+                console.log(`${resp.deptName} added to database`)
+                chooseAction();
+            })
+        }
+        )
 
     }
 
