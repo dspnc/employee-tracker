@@ -54,20 +54,14 @@ const handleBiz = async (response) => {
         case "Update Employee Role":
             console.log("updated employee role chosen");
             return updateRole()
-            // chooseAction();
-            break;
         case "View All Roles":
             return viewRoles();
         case "Add Role":
-            console.log("add role");
-            // chooseAction();
-            break;
+            return addRole();
         case "View All Departments":
             return viewDepartments();
         case "Add Department":
-            console.log("add dept")
-            // chooseAction();
-            break;
+            return addDepartment();
         case "Quit":
             console.log("Quitting");
             return;
@@ -146,7 +140,20 @@ const promptName = function(){
         })
         }
     
+    //function for updating a chosen employee's role
     const updateRole = function(){
+
+        const roles = db.query(`SELECT * FROM role`, (err, res) => {
+                if (err) {
+                    console.log(err)
+                    return
+                }
+                res.map((role) => ({
+                    name: `${role.role_title}`,
+                    value: role,
+                }))
+        })
+
         db.query('SELECT * FROM employee', (err, results) => {
             if (err) {
               console.log(err);
@@ -158,6 +165,8 @@ const promptName = function(){
               name: `${employee.first_name} ${employee.last_name}`,
               value: employee,
             }));
+
+           
         
             // Prompt the user to select an employee from the list
             inquirer
@@ -176,14 +185,15 @@ const promptName = function(){
                     {
                       type: 'input',
                       name: 'roleId',
-                      message: `Enter a new role ID for ${employee.first_name} ${employee.last_name}:`,
-                      default: employee.role_id,
+                      message: `What is the employee's new role?`,
                     },
                   ])
                   .then((resp) => {
+                    const chosenRole = resp.roleId
+                    
                     // Update the employee data in the database
                     db.query(
-                      `UPDATE employee SET role_id = ${resp.roleId} WHERE employee_id = ${employee.employee_id}`,
+                      `UPDATE employee SET role_id = ${chosenRole} WHERE employee_id = ${employee.employee_id}`,
                       (err, results) => {
                         if (err) {
                           console.log('Error updating employee in database:', err);
@@ -198,6 +208,47 @@ const promptName = function(){
               });
           });
     }
+
+    const addDepartment = function(){
+
+    }
+
+    const addRole = function(){
+        db.query('SELECT * FROM department', (err, results) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            // Map the dept data to an array of choices for the prompt
+            const departments = results.map((dept) => ({
+              name: `${dept.dept_name}`,
+              value: dept,
+            }));
+
+        inquirer.prompt([{
+            type: 'input',
+            name:'roleTitle',
+            message: 'What is the name of the new role?'},
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'What is the salary of the new role?'
+        },
+        {
+            type: 'list',
+            name: 'departmentId',
+            message: 'What department does the new role belong to?',
+            choices: departments
+        }
+        ]).then(
+        (resp) => {
+            db.query(`INSERT INTO role (role_title, salary, dept_id) VALUES("${resp.roleTitle}", ${resp.salary}, ${resp.departmentId.dept_id})`)
+            console.log(`${resp.roleTitle} added to database`)
+            chooseAction();
+
+        })
+
+    })}
 
  
     
