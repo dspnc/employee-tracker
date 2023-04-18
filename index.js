@@ -53,6 +53,7 @@ const handleBiz = async (response) => {
             return addEmployee()
         case "Update Employee Role":
             console.log("updated employee role chosen");
+            return updateRole()
             // chooseAction();
             break;
         case "View All Roles":
@@ -98,9 +99,7 @@ const viewRoles = function(){
 
 
 const addEmployee = async function(){
-
     await promptName();
- 
 }
 
 const promptName = function(){
@@ -147,6 +146,58 @@ const promptName = function(){
         })
         }
     
+    const updateRole = function(){
+        db.query('SELECT * FROM employee', (err, results) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+        
+            // Map the employee data to an array of choices for the prompt
+            const choices = results.map((employee) => ({
+              name: `${employee.first_name} ${employee.last_name}`,
+              value: employee,
+            }));
+        
+            // Prompt the user to select an employee from the list
+            inquirer
+              .prompt({
+                type: 'list',
+                name: 'employee',
+                message: 'Select an employee to update:',
+                choices,
+              })
+              .then((resp) => {
+                const employee = resp.employee;
+        
+                // Prompt the user to update the employee data
+                inquirer
+                  .prompt([
+                    {
+                      type: 'input',
+                      name: 'roleId',
+                      message: `Enter a new role ID for ${employee.first_name} ${employee.last_name}:`,
+                      default: employee.role_id,
+                    },
+                  ])
+                  .then((resp) => {
+                    // Update the employee data in the database
+                    db.query(
+                      `UPDATE employee SET role_id = ${resp.roleId} WHERE employee_id = ${employee.employee_id}`,
+                      (err, results) => {
+                        if (err) {
+                          console.log('Error updating employee in database:', err);
+                          return;
+                        }
+        
+                        console.log(`Role updated for ${employee.first_name} ${employee.last_name}`);
+                        chooseAction();
+                      }
+                    );
+                  });
+              });
+          });
+    }
 
  
     
