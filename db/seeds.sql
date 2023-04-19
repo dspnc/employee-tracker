@@ -15,8 +15,14 @@ VALUES ("Sales Executive", 120000, 1),
        
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES ("Doug", "Davis", 1, NULL),
-    ("Sam", "Smith", 2, NULL),
-    ("Brett", "Parnell", 3, NULL),
-    ("Spencer", "Hill", 4, NULL),
+VALUES ("Doug", "Davis", 1, 5),
+    ("Sam", "Smith", 2, 4),
+    ("Brett", "Parnell", 3, 1),
+    ("Spencer", "Hill", 4, 5),
     ("Maria", "Flanagan", 5, NULL); 
+
+ALTER TABLE employee
+ADD CONSTRAINT manager_id
+FOREIGN KEY (manager_id)
+REFERENCES employee(employee_id)
+ON DELETE SET NULL;

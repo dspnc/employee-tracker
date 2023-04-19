@@ -93,14 +93,39 @@ const viewRoles = function(){
 
 
 const addEmployee = async function(){
+    
     await promptName();
 }
 
 const promptName = function(){
     var firstName;
     var lastName;
-    var role;
+    var chosenRole;
     var managerId;
+    var roles;
+    db.query(`SELECT * FROM role`, (err, res) => {
+                if (err) {
+                    console.log(err)
+                    return
+                }
+            const roles = res.map((role) => ({
+                    name: `${role.role_title}`,
+                    value: role,
+                }))
+
+    db.query('SELECT * FROM employee', (err, res) => {
+        if (err) {
+            console.log(err)
+            return
+        }
+        const managers = res.map((employee) => ({
+            name: `${employee.manager_id}`,
+            value: employee,
+            
+        }))
+
+    
+                
 
     inquirer.prompt([{
             type: 'input',
@@ -112,14 +137,16 @@ const promptName = function(){
             message: 'What is the last name of the new employee?'
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'role',
-            message: 'What will be the role of the new employee?'
+            message: 'What will be the role of the new employee?',
+            choices: roles
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'manager',
-            message: "What is the manager id for the new employee's manager?"
+            message: "Who is the manager for this employee?",
+            choices: managers
         }
         ]).then(
         (resp) => {
@@ -127,9 +154,8 @@ const promptName = function(){
             console.log("First name is " + firstName)
             lastName = resp.lastname;
             console.log("Last name is " + lastName)
-            role = resp.role
-            managerId = resp.manager
-            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES("${firstName}", "${lastName}", ${role}, ${managerId})`, function (err, results) {
+            chosenRole = resp.role
+            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES("${firstName}", "${lastName}", ${chosenRole.role_id}, ${resp.manager.manager_id})`, function (err, results) {
                 if (err){
                     console.log("Error inserting data into table: " + err)
                 } else {
@@ -137,8 +163,10 @@ const promptName = function(){
                 chooseAction()
                 }
             })
-        })
-        }
+        })})
+    })
+    
+    }
     
     //function for updating a chosen employee's role
     const updateRole = function(){
@@ -153,6 +181,7 @@ const promptName = function(){
                     value: role,
                 }))
         })
+
 
         db.query('SELECT * FROM employee', (err, results) => {
 
